@@ -1,0 +1,54 @@
+# Dependencies
+node_modules/
+
+# Expo / EAS build artifacts
+.expo/
+dist/
+web-build/
+expo-env.d.ts
+
+# Git & Agent configs
+.git/
+.claude/
+
+# Native folders (Generated during continuous native generation in EAS)
+/ios
+/android
+
+# Keystores & sensitive credentials
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+*.pem
+
+# Environment files (Handle via EAS secrets / environment variables)
+.env*.local
+.env.local
+
+# Metro bundler cache & health checks
+.metro-health-check*
+.cache/
+
+# Test files & coverage
+coverage/
+__tests__/
+*.test.ts
+*.test.tsx
+vitest.config.mts
+
+# Logs & debug outputs
+npm-debug.*
+yarn-debug.*
+yarn-error.*
+*.log
+
+# OS & Editor files
+.DS_Store
+.idea/
+.vscode/
+*.swp
+*.swo
+*.tsbuildinfo
+AGENTS.md

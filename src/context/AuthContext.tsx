@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { UserProfile, SyncStatus } from '../types';
-import { initDatabase } from '../db/sqlite';
+import { initDatabase, wipeDatabase } from '../db/sqlite';
 import { ensureDefaultCategories } from '../db/categoryRepo';
 import { ensureDefaultAccounts } from '../db/accountRepo';
 import { getMetadata, setMetadata, getPendingChanges } from '../db/outboxRepo';
@@ -9,11 +9,16 @@ import { apiFetch } from '../services/apiClient';
 import { syncWithBackend, subscribeSyncStatus } from '../services/syncEngine';
 import { setSyncRunner } from '../services/sync/syncTrigger';
 import { generateUUID } from '../utils/uuid';
+import { queryClient } from '../query/queryClient';
+import { useSessionStore } from '../features/session/sessionStore';
+import { useUiStore } from '../features/ui/uiStore';
+import { usePreferencesStore } from '../features/preferences/preferencesStore';
 
 interface AuthContextType {
   user: UserProfile | null;
   isLoading: boolean;
   syncStatus: SyncStatus;
+  isAuthenticated: boolean;
   login: (email: string, password: string) => Promise<void>;
   register: (email: string, password: string, name: string) => Promise<void>;
   logout: () => Promise<void>;
@@ -25,6 +30,7 @@ const AuthContext = createContext<AuthContextType>({
   user: null,
   isLoading: true,
   syncStatus: 'offline',
+  isAuthenticated: false,
   login: async () => {},
   register: async () => {},
   logout: async () => {},
@@ -177,23 +183,45 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+  const isAuthenticated = Boolean(
+    user && user.email && user.email !== 'offline@moneysaver.local'
+  );
+
   const logout = async () => {
+    setIsLoading(true);
     try {
-      // Flush anything still queued while we still hold the current identity.
-      // Switching the local user id first would strand those changes in the
-      // outbox, and they would later be pushed stamped with a different account.
+      // Flush anything still queued while we still hold the current identity if online
       const currentUserId = await getMetadata('current_user_id');
-      if (currentUserId) {
-        await syncWithBackend(currentUserId);
+      if (currentUserId && user?.email !== 'offline@moneysaver.local') {
+        try {
+          await syncWithBackend(currentUserId);
+        } catch (_syncErr) {
+          // If offline or failed, continue with local wipe
+        }
       }
 
+      // 1. Clear secure store tokens
       await clearTokens();
-      // Reset to local offline user
+
+      // 2. Completely wipe all local SQLite database records
+      wipeDatabase();
+
+      // 3. Clear in-memory query cache & reset Zustand stores
+      queryClient.clear();
+      useSessionStore.getState().reset();
+      useUiStore.getState().reset();
+      usePreferencesStore.getState().reset();
+
+      // 4. Initialize fresh clean offline identity
       const guestId = generateUUID();
       await setMetadata('current_user_id', guestId);
       await setMetadata('current_user_email', 'offline@moneysaver.local');
       await setMetadata('current_user_name', 'My Wallet');
+      await setMetadata('current_user_currency', 'PHP');
       await setMetadata('last_sync_cursor', '');
+
+      await ensureDefaultCategories(guestId);
+      await ensureDefaultAccounts(guestId);
 
       setUser({
         id: guestId,
@@ -201,10 +229,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         name: 'My Wallet',
         currency: 'PHP',
       });
-      await ensureDefaultCategories(guestId);
-      await ensureDefaultAccounts(guestId);
     } catch (err) {
       console.error('Logout error:', err);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -241,6 +269,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         user,
         isLoading,
         syncStatus,
+        isAuthenticated,
         login,
         register,
         logout,

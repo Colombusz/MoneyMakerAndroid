@@ -11,6 +11,7 @@ import { AddTransactionModal } from '../components/AddTransactionModal';
 import { AddAccountModal } from '../components/AddAccountModal';
 import { CashQuickSpendModal } from '../features/accounts';
 import { AuthModal } from '../components/AuthModal';
+import { ProfileModal } from '../components/ProfileModal';
 import { useHomeScreenData } from '../features/home/useHomeScreenData';
 import { deleteAccount } from '../db/accountRepo';
 import { invalidateForChange } from '../query';
@@ -40,6 +41,7 @@ export const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
   const [txModalType, setTxModalType] = useState<TransactionType>('expense');
   const [accModalVisible, setAccModalVisible] = useState(false);
   const [authModalVisible, setAuthModalVisible] = useState(false);
+  const [profileModalVisible, setProfileModalVisible] = useState(false);
   const [cashQuickSpendAccount, setCashQuickSpendAccount] = useState<Account | null>(null);
 
   const openTxModal = (type: TransactionType) => {
@@ -80,7 +82,7 @@ export const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
       <View style={styles.topBar}>
         <TouchableOpacity
           activeOpacity={0.7}
-          onPress={() => setAuthModalVisible(true)}
+          onPress={() => setProfileModalVisible(true)}
           style={styles.avatarButton}
         >
           <View style={[styles.avatar, { backgroundColor: colors.primaryLight }]}>
@@ -176,7 +178,19 @@ export const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
         onSuccess={loadDashboardData}
       />
 
-      <AuthModal visible={authModalVisible} onClose={() => setAuthModalVisible(false)} />
+      <ProfileModal
+        visible={profileModalVisible}
+        onClose={() => setProfileModalVisible(false)}
+        onOpenAuth={() => setAuthModalVisible(true)}
+      />
+
+      <AuthModal
+        visible={authModalVisible}
+        onClose={() => {
+          setAuthModalVisible(false);
+          loadDashboardData();
+        }}
+      />
     </ScreenContainer>
   );
 };

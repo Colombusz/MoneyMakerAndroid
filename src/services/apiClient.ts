@@ -1,7 +1,7 @@
 import { getAccessToken, getRefreshToken, saveTokens, clearTokens } from './secureStorage';
 
-// For Android emulator 10.0.2.2 points to host machine localhost:4000
-const DEFAULT_API_URL = 'http://192.168.100.40:4000';
+// Reads EXPO_PUBLIC_API_URL from .env / EAS build environment, falling back to local IP for dev
+const DEFAULT_API_URL = process.env.EXPO_PUBLIC_API_URL || 'http://192.168.100.40:4000';
 
 let customBaseUrl: string | null = null;
 

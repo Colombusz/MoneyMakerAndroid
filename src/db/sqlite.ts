@@ -31,3 +31,26 @@ export const initDatabase = async (): Promise<void> => {
   const db = getDB();
   runMigrations(db);
 };
+
+/**
+ * Completely wipes all application data from SQLite tables.
+ * Used during logout to guarantee no user data remains on the device.
+ */
+export const wipeDatabase = (): void => {
+  const db = getDB();
+  db.execSync(`
+    PRAGMA foreign_keys = OFF;
+    DELETE FROM transactions;
+    DELETE FROM accounts;
+    DELETE FROM categories;
+    DELETE FROM goals;
+    DELETE FROM goal_contributions;
+    DELETE FROM recurring_rules;
+    DELETE FROM recurring_overrides;
+    DELETE FROM day_notes;
+    DELETE FROM sync_outbox;
+    DELETE FROM sync_metadata;
+    PRAGMA foreign_keys = ON;
+  `);
+};
+
