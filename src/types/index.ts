@@ -186,3 +186,129 @@ export interface SyncOutboxItem {
 }
 
 export type SyncStatus = 'synced' | 'syncing' | 'offline' | 'error';
+
+// ==========================================
+// Vacation Mode Types
+// ==========================================
+
+export type VacationRole = 'master' | 'member';
+export type VacationStatus = 'active' | 'concluded';
+export type VacationLogType = 'deposit' | 'expense' | 'chip_in' | 'refund' | 'reversal' | 'concluded';
+
+export interface VacationMember {
+  userId: string;
+  name: string;
+  role: VacationRole;
+  joinedAt: string;
+}
+
+export interface Vacation {
+  _id: string;
+  name: string;
+  description?: string;
+  joinCode: string;
+  creatorUserId: string;
+  status: VacationStatus;
+  members: VacationMember[];
+  balanceCentavos: number;
+  concludedAt?: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export type VacationExpenseDeductionSource = 'pool' | 'chip_in';
+
+export interface VacationExpenseItem {
+  _id: string;
+  vacationId: string;
+  createdByUserId: string;
+  createdByName: string;
+  title: string;
+  amountCentavos: number;
+  category?: string | null;
+  deductionSource?: VacationExpenseDeductionSource;
+  chipInId?: string | null;
+  date: string;
+  notes?: string;
+  createdAt: string;
+}
+
+export interface VacationLoggedExpense {
+  _id: string;
+  vacationId: string;
+  userId: string;
+  userName: string;
+  title: string;
+  amountCentavos: number;
+  category?: string | null;
+  fromAccountId?: string;
+  date: string;
+  notes?: string;
+  createdAt: string;
+}
+
+export interface VacationChipInContribution {
+  _id: string;
+  chipInId: string;
+  vacationId: string;
+  userId: string;
+  userName: string;
+  amountCentavos: number;
+  fromAccountId?: string;
+  date: string;
+  notes?: string;
+}
+
+export interface VacationChipIn {
+  _id: string;
+  vacationId: string;
+  createdByUserId: string;
+  createdByName: string;
+  title: string;
+  targetAmountCentavos?: number | null;
+  totalCollectedCentavos: number;
+  totalSpentCentavos?: number;
+  totalRefundedCentavos?: number;
+  description?: string;
+  status: 'open' | 'closed';
+  contributions: VacationChipInContribution[];
+  createdAt: string;
+}
+
+export interface VacationTransactionLog {
+  _id: string;
+  vacationId: string;
+  type: VacationLogType;
+  userId: string;
+  userName: string;
+  amountCentavos: number;
+  description: string;
+  relatedItemId?: string | null;
+  date: string;
+  createdAt: string;
+}
+
+export interface PastVacationSummary {
+  vacation: {
+    _id: string;
+    name: string;
+    description?: string;
+    joinCode: string;
+    creatorUserId: string;
+    status: VacationStatus;
+    createdAt: string;
+    concludedAt?: string | null;
+  };
+  sharedExpenses: VacationExpenseItem[];
+  myLoggedExpenses: VacationLoggedExpense[];
+  myChipIns: VacationChipIn[];
+  summary: {
+    totalSharedExpensesCentavos: number;
+    myLoggedExpensesCentavos: number;
+    myChipInContributionsCentavos: number;
+    myDepositsCentavos: number;
+    myRefundsCentavos: number;
+    myTotalSpentCentavos: number;
+  };
+}
+

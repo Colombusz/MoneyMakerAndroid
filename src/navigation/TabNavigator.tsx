@@ -9,6 +9,7 @@ import { CalendarScreen } from '../screens/CalendarScreen';
 import { RecurringScreen } from '../screens/RecurringScreen';
 import { GoalsScreen } from '../screens/GoalsScreen';
 import { PartnerScreen } from '../screens/PartnerScreen';
+import { VacationScreen } from '../screens/VacationScreen';
 
 const Tab = createBottomTabNavigator();
 
@@ -93,6 +94,15 @@ export const TabNavigator: React.FC = () => {
           options={{
             tabBarLabel: 'Partner',
             tabBarIcon: ({ color, size }) => <Ionicons name="heart" size={size} color={color} />,
+          }}
+        />
+
+        <Tab.Screen
+          name="Vacation"
+          component={VacationScreen}
+          options={{
+            tabBarLabel: 'Vacation',
+            tabBarIcon: ({ color, size }) => <Ionicons name="airplane" size={size} color={color} />,
           }}
         />
       </Tab.Navigator>
