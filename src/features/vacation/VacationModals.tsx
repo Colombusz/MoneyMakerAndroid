@@ -1369,4 +1369,30 @@ const styles = StyleSheet.create({
     fontSize: 10,
     marginTop: 2,
   },
+  fieldLabel: {
+    fontSize: typography.fontSizes.xs,
+    fontWeight: typography.fontWeights.semibold,
+    marginBottom: 4,
+  },
+  inputLabel: {
+    fontSize: typography.fontSizes.xs,
+    fontWeight: typography.fontWeights.semibold,
+    marginBottom: 4,
+  },
+  sourceOptionBtn: {
+    flex: 1,
+    padding: spacing.sm,
+    borderRadius: radii.md,
+    borderWidth: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  sourceOptionTitle: {
+    fontSize: typography.fontSizes.xs,
+    fontWeight: typography.fontWeights.bold,
+  },
+  sourceOptionSub: {
+    fontSize: 10,
+    marginTop: 2,
+  },
 });
