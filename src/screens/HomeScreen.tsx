@@ -99,6 +99,20 @@ export const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
         </TouchableOpacity>
 
         <View style={styles.topActions}>
+          <TouchableOpacity
+            activeOpacity={0.7}
+            onPress={() => navigation.navigate('Stocks')}
+            style={[
+              styles.stocksHeaderBtn,
+              {
+                backgroundColor: 'rgba(16,185,129,0.15)',
+                borderColor: 'rgba(16,185,129,0.3)',
+              }
+            ]}
+          >
+            <Ionicons name="trending-up" size={14} color={colors.income} />
+            <Text style={[styles.stocksHeaderBtnText, { color: colors.income }]}>Stocks</Text>
+          </TouchableOpacity>
           <SyncStatusBadge />
           <TouchableOpacity
             onPress={toggleTheme}
@@ -122,6 +136,67 @@ export const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
         onOpenAddTx={openTxModal}
         onNavigateCalendar={() => navigation.navigate('Calendar')}
       />
+
+      {/* US Stocks Monitoring & Prediction Highlight Card */}
+      <TouchableOpacity
+        activeOpacity={0.8}
+        onPress={() => navigation.navigate('Stocks')}
+        style={[
+          styles.stocksHighlightCard,
+          {
+            backgroundColor: colors.card,
+            borderColor: 'rgba(16,185,129,0.35)',
+          }
+        ]}
+      >
+        <View style={styles.stocksCardTop}>
+          <View style={styles.stocksIconTitleRow}>
+            <View style={[styles.stocksIconBox, { backgroundColor: colors.income }]}>
+              <Ionicons name="trending-up" size={20} color="#ffffff" />
+            </View>
+            <View style={{ flex: 1 }}>
+              <View style={styles.stocksBadgeRow}>
+                <Text style={[styles.stocksCardTitle, { color: colors.text }]}>
+                  US Stocks & Predictions
+                </Text>
+                <View style={[styles.stocksLivePill, { backgroundColor: 'rgba(16,185,129,0.15)' }]}>
+                  <Text style={[styles.stocksLivePillText, { color: colors.income }]}>LIVE AI</Text>
+                </View>
+              </View>
+              <Text style={[styles.stocksCardSub, { color: colors.textSecondary }]}>
+                Alpha Vantage Telemetry • Multi-Factor Forecasting
+              </Text>
+            </View>
+          </View>
+        </View>
+
+        {/* Ticker Snapshot Chips */}
+        <View style={styles.stocksTickerRow}>
+          <View style={[styles.tickerPill, { backgroundColor: colors.background, borderColor: colors.border }]}>
+            <Text style={[styles.tickerSymbol, { color: colors.text }]}>AAPL</Text>
+            <Text style={[styles.tickerPrice, { color: colors.income }]}>$333.69 (+1.0%)</Text>
+          </View>
+          <View style={[styles.tickerPill, { backgroundColor: colors.background, borderColor: colors.border }]}>
+            <Text style={[styles.tickerSymbol, { color: colors.text }]}>NVDA</Text>
+            <Text style={[styles.tickerPrice, { color: colors.income }]}>$137.45 (+1.9%)</Text>
+          </View>
+          <View style={[styles.tickerPill, { backgroundColor: colors.background, borderColor: colors.border }]}>
+            <Text style={[styles.tickerSymbol, { color: colors.text }]}>TSLA</Text>
+            <Text style={[styles.tickerPrice, { color: colors.income }]}>$265.12 (+2.4%)</Text>
+          </View>
+        </View>
+
+        {/* Action Footer */}
+        <View style={[styles.stocksActionRow, { borderTopColor: colors.border }]}>
+          <Text style={[styles.stocksActionHint, { color: colors.textMuted }]}>
+            Tap to view live quotes & predictions
+          </Text>
+          <View style={[styles.stocksActionBtn, { backgroundColor: colors.income }]}>
+            <Text style={styles.stocksActionBtnText}>Explore</Text>
+            <Ionicons name="arrow-forward" size={12} color="#ffffff" />
+          </View>
+        </View>
+      </TouchableOpacity>
 
       {/* Accounts Section */}
       <View style={styles.sectionHeader}>
@@ -252,5 +327,107 @@ const styles = StyleSheet.create({
   seeAllText: {
     fontSize: typography.fontSizes.sm,
     fontWeight: typography.fontWeights.semibold,
+  },
+  stocksHeaderBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    paddingHorizontal: spacing.sm,
+    paddingVertical: 6,
+    borderRadius: radii.md,
+    borderWidth: 1,
+  },
+  stocksHeaderBtnText: {
+    fontSize: 11,
+    fontWeight: '700',
+  },
+  stocksHighlightCard: {
+    borderRadius: radii.xl,
+    borderWidth: 1.5,
+    padding: spacing.base,
+    marginBottom: spacing.xl,
+  },
+  stocksCardTop: {
+    marginBottom: spacing.md,
+  },
+  stocksIconTitleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+  },
+  stocksIconBox: {
+    width: 38,
+    height: 38,
+    borderRadius: radii.md,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  stocksBadgeRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.xs,
+  },
+  stocksCardTitle: {
+    fontSize: typography.fontSizes.base,
+    fontWeight: typography.fontWeights.bold,
+  },
+  stocksLivePill: {
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: radii.full,
+  },
+  stocksLivePillText: {
+    fontSize: 9,
+    fontWeight: '800',
+    letterSpacing: 0.5,
+  },
+  stocksCardSub: {
+    fontSize: 11,
+    marginTop: 2,
+  },
+  stocksTickerRow: {
+    flexDirection: 'row',
+    gap: spacing.xs,
+    marginBottom: spacing.md,
+  },
+  tickerPill: {
+    flex: 1,
+    paddingVertical: 6,
+    paddingHorizontal: spacing.xs,
+    borderRadius: radii.md,
+    borderWidth: 1,
+    alignItems: 'center',
+  },
+  tickerSymbol: {
+    fontSize: 10,
+    fontWeight: '700',
+  },
+  tickerPrice: {
+    fontSize: 9,
+    fontWeight: '700',
+    marginTop: 1,
+  },
+  stocksActionRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingTop: spacing.sm,
+    borderTopWidth: 1,
+  },
+  stocksActionHint: {
+    fontSize: 11,
+  },
+  stocksActionBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    paddingHorizontal: spacing.md,
+    paddingVertical: 6,
+    borderRadius: radii.full,
+  },
+  stocksActionBtnText: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#ffffff',
   },
 });
